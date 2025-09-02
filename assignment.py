@@ -17,6 +17,9 @@
 # Calculate u programmatically w/ helper func
 # goal is to get pos p to equal target using u
 
+# NOTE: Report info:
+# Report Q2: t1_iterations = target1_distance * meters_per_second second_per_iteration * 2 # NOTE: "2" is currently a magic number until I find a variable name for a value the denominator of the meters per second, should be "target1_distance * iterations_per_second / mps"
+
 import time
 import math
 
@@ -69,7 +72,13 @@ t1_reached = False
 
 # ######################## Place Helper Functions Here ##################
 # ############## Do not modify anything outside this area ###############
-# def foo(b)
+
+def check_distance(target_x, target_y, current_x, current_y) -> bool:
+    distance = math.sqrt( (target_x - current_x)**2 + (target_y - current_y)**2 )
+    return distance < 0.01
+
+def check_angle(target_theta, current_theta) -> bool:
+    return abs(target_theta - current_theta) <= 0.1
 
 # ############## Do not modify anything outside this area ###############
 # #######################################################################
@@ -101,10 +110,7 @@ for t in range(iterations):
         target1_distance = math.sqrt((target1_distance_x * target1_distance_x) + (target1_distance_y * target1_distance_y))
         print(f"hypotenuse is: {target1_distance}\n")
 
-        if target1_distance == 0:
-            target1_distance += 0.01
-
-        target1_start_theta = math.acos(target1_distance_x / target1_distance) * -1
+        target1_start_theta = math.atan2(target1_distance_y, target1_distance_x)
         print(f"theta is: {target1_start_theta}\n")
         t1_iterations = target1_distance * iterations_per_second * 2 # NOTE: "2" is currently a magic number until I find a variable name for a value the denominator of the meters per second, should be "target1_distance * iterations_per_second / mps"
         t1_iterator = 0
@@ -114,7 +120,7 @@ for t in range(iterations):
         u = np.array([[0], [pi_by_4]])
     elif (t1_reached == False and ( (abs(p[0] - target1[0] > .1)) or (abs(p[1] - target1[1] > .1)))):
         print(f"second if entered, iteration {t1_iterator} of {t1_iterations}")
-        u = np.array([[0.8], [0]])
+        u = np.array([[0.08], [0]])
         t1_iterator += 1
     else:
         t1_reached = True
@@ -133,9 +139,6 @@ for t in range(iterations):
     
     
     #u = np.array([[1], [0]])
-
-    # You  can try with u = np.array([[0.1], [0]]) and np.array([[0], [1]]) first.
-    # Observe what happens to get a sense of how it works.
 
     # You should think about implementing a finite-state machine. How many
     # states are there? What are the transitions? What signals the transition
